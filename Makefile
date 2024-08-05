@@ -22,6 +22,10 @@ migrate:
 	docker compose exec app bash -c "cd apps && php artisan migrate"
 	make keygen
 
+migrate.seed:
+	docker compose exec app bash -c "cd apps && php artisan db:seed"
+
 run:
 	docker compose exec app bash -c "cd apps && composer dump-autoload"
+	docker restart laravel_web
 	docker compose logs -f --tail=100 app
