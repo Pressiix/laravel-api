@@ -7,6 +7,7 @@ prepare:
 
 install: i
 i:
+	make clean
 	docker compose exec app bash -c "cd apps && composer install && composer dump-autoload"
 
 clean:
@@ -17,8 +18,6 @@ keygen:
 
 # Run database migrations
 migrate:
-	make clean
-	make install
 	docker compose exec app bash -c "cd apps && php artisan migrate"
 	make keygen
 
