@@ -16,7 +16,7 @@ prepare:
 
 build:
 	docker compose exec app bash -c "cd apps &&  composer dump-autoload"
-	docker compose exec app bash -c "cd apps && yarn build"
+	docker compose exec app bash -c "cd apps && ls && yarn build"
 
 install: i
 i:

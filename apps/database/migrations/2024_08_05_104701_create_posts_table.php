@@ -13,6 +13,9 @@ class CreatePostsTable extends Migration
      */
     public function up()
     {
+        // Drop the table if it exists before creating it
+        Schema::dropIfExists('posts');
+        // Create the posts table
         Schema::create('posts', function (Blueprint $table) {
             $table->id(); // Primary key
             $table->string('title'); // Title of the post
