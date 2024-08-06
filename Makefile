@@ -9,16 +9,20 @@ help:
 	@echo "  make create.seed name=SeederName"
 
 prepare:
-	docker compose down
 	docker compose up --build -d
 	docker compose exec app bash -c "chown -R www-data:www-data /var/www/apps/storage /var/www/apps/bootstrap/cache"
 	docker compose exec app bash -c "chmod -R 775 /var/www/apps/storage /var/www/apps/bootstrap/cache"
 	make migrate
 
+build:
+	docker compose exec app bash -c "cd apps &&  composer dump-autoload"
+	docker compose exec app bash -c "cd apps && yarn build"
+
 install: i
 i:
 	make clean
-	docker compose exec app bash -c "cd apps && composer install && composer dump-autoload"
+	docker compose exec app bash -c "cd apps && composer install"
+	docker compose exec app bash -c "cd apps && yarn && yarn"
 
 clean:
 	docker compose exec app bash -c "cd apps && rm -rf vendor"
@@ -29,7 +33,6 @@ keygen:
 # Run database migrations
 migrate:
 	docker compose exec app bash -c "cd apps && php artisan migrate"
-	make keygen
 
 migrate.seed:
 	docker compose exec app bash -c "cd apps && php artisan db:seed"
@@ -37,7 +40,7 @@ migrate.seed:
 run:
 	docker compose exec app bash -c "cd apps && composer dump-autoload"
 	docker restart laravel_web
-	docker compose logs -f --tail=100 app
+	docker compose exec app bash -c "cd apps && yarn dev --port 3000"
 
 # Create a Laravel controller
 .PHONY: create.controller
@@ -63,3 +66,6 @@ create.migration:
 .PHONY: create.seed
 create.seed:
 	docker compose exec app bash -c "cd apps && php artisan make:seeder $${name}"
+
+go.shell:
+	docker compose exec app bash
